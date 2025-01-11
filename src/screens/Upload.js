@@ -205,7 +205,7 @@ export default function Upload({navigation}) {
           contents: [{
             role: "user",
             parts: [{
-              text: `Please provide a brief description (2-3 sentences) summarizing the main topic and key points of the following text: ${text}`
+              text: `Please provide a brief description (1 sentence) summarizing the main topic and key points of the following text: ${text}`
             }]
           }],
           generationConfig: {
