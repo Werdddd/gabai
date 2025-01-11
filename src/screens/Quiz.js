@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getFirestore, addDoc, collection } from 'firebase/firestore';
 
-export default function Quiz({ route }) {
+export default function Quiz({ route, navigation }) {
     const reviewerId = route.params?.reviewerId;
+    console.log("Quiz Screen - Received reviewerId:", reviewerId); 
 
     useEffect(() => {
         const generateAiQuizSet = async () => {
@@ -18,6 +19,8 @@ export default function Quiz({ route }) {
                 console.error('Error saving quiz attempt:', error);
             }
         };
+
+        console.log(reviewerId);
 
         generateAiQuizSet();
     }, [reviewerId]);

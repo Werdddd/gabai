@@ -3,34 +3,38 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 
-export default function ModeSelect({ route }) {
-  const { reviewerId } = route.params; // Get reviewerId from route params
-  const navigation = useNavigation();
-  const [selectedCard, setSelectedCard] = useState(null); // Track selected card
+export default function ModeSelect({ route, navigation }) {
+  const [selectedCard, setSelectedCard] = useState(null); 
+  const reviewerId = route.params?.reviewerId;
+  console.log("ModeSelect Screen - Received reviewerId:", reviewerId); // Debug log
 
   const modes = [
     {
       title: 'AI Study\nMode',
       description: 'Personalized, interactive sessions with AI.',
       icon: require('../../assets/chat.png'),
-      route: 'Chat'
+      route: 'Chat',
+      params: { reviewerId }
     },
     {
       title: 'Flashcards\nMode',
       description: 'Quick, engaging memory boosters.',
       icon: require('../../assets/flashcards.png'),
-      route: 'Flashcards'
+      route: 'Flashcards',
+      params: { reviewerId }
     },
     {
       title: 'Quiz\nMode',
       description: 'Dynamic quizzes to test your knowledge.',
       icon: require('../../assets/quiz.png'),
-      route: 'Quiz'
+      route: 'Quiz',
+      params: { reviewerId }
     }
   ];
 
-  const handleModeSelect = (route) => {
-    navigation.navigate(route, { reviewerId }); // Pass reviewerId to the selected route
+  const handleModeSelection = (mode) => {
+    console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
+    navigation.navigate(mode.route, { reviewerId: reviewerId });
   };
 
   return (
