@@ -28,6 +28,10 @@ export default function ModeSelect() {
     }
   ];
 
+  const handleModeSelect = (route) => {
+    navigation.navigate(route);
+  };
+
   return (
     <>
       <ScrollView
