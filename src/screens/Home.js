@@ -7,13 +7,20 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { firestore } from '../../firebase-config'; // Adjust this path as necessary
 import { collection, getDocs } from 'firebase/firestore';
+import Header from '../components/Header';
+import NavBar from '../components/NavBar';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState({ name: '', profileImage: '' });
 
   const fetchData = async () => {
     try {
@@ -39,18 +46,25 @@ export default function HomeScreen() {
     <TouchableOpacity style={styles.card}>
       <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
         <Image
-          source={require('../../assets/graduation-icon.png')} // Replace with your icon
+          source={require('../../assets/graduation-icon.png')}
           style={styles.icon}
         />
       </View>
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.name}</Text>
-        <Text style={styles.cardDescription}>{item.aiDescription}</Text>
-        <Text style={styles.cardDate}>
-          {item.dateCreated
-            ? new Date(item.dateCreated.seconds * 1000).toLocaleDateString()
-            : ''}
-        </Text>
+      <View style={styles.cardScrollContainer}>
+        {/* Scrollable card content */}
+        <ScrollView 
+          style={styles.cardContent} 
+          nestedScrollEnabled={true}
+        >
+          <Text style={styles.cardTitle}>{item.name}</Text>
+          <Text style={styles.cardDescription}>{item.aiDescription}</Text>
+          <Text style={styles.cardDate}>
+            {item.dateCreated
+              ? new Date(item.dateCreated.seconds * 1000).toLocaleDateString()
+              : ''}
+          </Text>
+        </ScrollView>
+
       </View>
       <View style={styles.arrowContainer}>
         <Text style={styles.arrow}>&gt;</Text>
@@ -67,12 +81,41 @@ export default function HomeScreen() {
   }
 
   return (
-    <FlatList
-      contentContainerStyle={styles.container}
-      data={data}
-      renderItem={renderReviewerCard}
-      keyExtractor={(item) => item.id}
-    />
+     <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+    <ScrollView style={styles.container}>
+      {/* Header Component */}
+      <Header name={userData.name} profileImage={userData.profileImage} />
+
+      <View style={styles.searchBarContainer}>
+        <TextInput
+            style={styles.searchBar}
+            placeholder="Search..."
+            placeholderTextColor="#999"
+        />
+        <TouchableOpacity style={styles.searchButton}>
+            <Image
+            source={require('../../assets/search-icon.png')} // Replace with your icon path
+            style={styles.searchIcon}
+            />
+        </TouchableOpacity>
+      </View>
+
+      {/* Reviewers Section */}
+      <Text style={styles.sectionTitle}>Your Reviewers</Text>
+      <FlatList
+    contentContainerStyle={styles.container}
+    data={data}
+    renderItem={renderReviewerCard}
+    keyExtractor={(item) => item.id}
+    showsVerticalScrollIndicator={false}  // Optional for cleaner UI
+  />
+      {/* <NavBar navigation={navigation} /> */}
+      </ScrollView>
+      <NavBar navigation={navigation} />
+      </KeyboardAvoidingView>
   );
 }
 
@@ -80,11 +123,44 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#f5f5f5',
-    padding: 10,
+    padding: 16,
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 10,
+  },
+  searchButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    tintColor: '#333', // Optional: Set color if using a monochrome icon
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+  },
+  cardListContainer: {
+    maxHeight: 300,  // Adjust based on desired visible space
+    overflow: 'hidden', // Helps maintain layout integrity
   },
   card: {
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 15,
@@ -94,7 +170,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    height: 150,  // Ensure fixed card height
   },
+  cardScrollContainer: {
+    flex: 1,
+  },
+  cardContent: {
+    maxHeight: 100,  // Set maxHeight for scroll area
+    paddingRight: 10,
+  },
+
   iconContainer: {
     width: 50,
     height: 50,
