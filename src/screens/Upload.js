@@ -136,6 +136,91 @@ export default function Upload({navigation}) {
       console.error('Error storing flashcards:', error);
     }
   };
+
+  const generateAiQuizSet = async (reviewerText, reviewerId) => {
+    try {
+
+      console.log("Confirm: " + reviewerText);
+
+        // 2. Generate quiz questions using Gemini
+        const response = await axios.post(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_KEY}`,
+            {
+                contents: [{
+                    role: "user",
+                    parts: [{
+                        text: `Based on this knowledge: "${reviewerText}", generate 5 multiple choice questions. 
+                        Return the response in this exact JSON format:
+                        [
+                            {
+                                "question": "the question text",
+                                "option1": "first option",
+                                "option2": "second option",
+                                "option3": "third option",
+                                "option4": "fourth option",
+                                "answer": "the correct option"
+                            }
+                        ]
+                        Ensure the response is valid JSON and the answer exactly matches one of the options.`
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,  // Reduced for more consistent formatting
+                    topK: 40,
+                    topP: 0.95,
+                    maxOutputTokens: 8192,
+                    responseMimeType: "text/plain"
+                }
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        // Log the raw response text
+        console.log("Raw Gemini Response:", response.data.candidates[0].content.parts[0].text);
+
+        if (response.data.candidates && response.data.candidates[0].content.parts[0].text) {
+            let responseText = response.data.candidates[0].content.parts[0].text;
+            
+            // Clean up the response text if needed
+            responseText = responseText.trim();
+            if (responseText.startsWith('```json')) {
+                responseText = responseText.replace('```json', '').replace('```', '').trim();
+            }
+
+            try {
+                const generatedQuestions = JSON.parse(responseText);
+                console.log("Parsed Questions:", generatedQuestions);
+
+                // 3. Store each question separately in Firestore
+                for (const question of generatedQuestions) {
+                    await addDoc(collection(firestore, 'quiz'), {
+                        question: question.question,
+                        option1: question.option1,
+                        option2: question.option2,
+                        option3: question.option3,
+                        option4: question.option4,
+                        answer: question.answer,
+                        reviewerUid: reviewerId,
+                        createdAt: new Date()
+                    });
+                }
+
+            } catch (parseError) {
+                console.error('JSON Parse Error:', parseError);
+                console.error('Failed to parse text:', responseText);
+            }
+        }
+    } catch (error) {
+        console.error('Error generating quiz:', error);
+        if (error.response) {
+            console.error('API Error Response:', error.response.data);
+        }
+    }
+};
   
 
   const handleCreateReviewer = async () => {
@@ -183,9 +268,15 @@ export default function Upload({navigation}) {
 
       // Store reviewer data with AI description
       const reviewerDocRef = await storeReviewerData(name, joinedTexts, cardColor, new Date(), auth.currentUser.uid, aiDescription);
+      
+      // Set reviewerId in state
+      setReviewerId(reviewerDocRef.id);
 
       // Store flashcards in Firestore
       await storeFlashcards(flashcards, reviewerDocRef.id);
+
+      // Generate quiz set
+      await generateAiQuizSet(joinedTexts, reviewerDocRef.id);
 
       // Clear inputs after processing
       setPlainText('');
