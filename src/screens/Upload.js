@@ -78,7 +78,7 @@ export default function Upload({navigation}) {
               role: 'user',
               parts: [
                 {
-                  text: `Create multiple flashcards consisting of a question and an answer based on the following content (5 minimum) and output them as JSON:\n\n${text}`,
+                  text: `Create 10-20 flashcards in JSON format based on the provided content. Each flashcard should have a 'question' and an 'answer' field. Ensure the questions are clear, engaging, and diverse, while the answers are concise, accurate, and informative.\n\n${text}`,
                 },
               ],
             },
@@ -365,7 +365,7 @@ export default function Upload({navigation}) {
           contents: [{
             role: "user",
             parts: [{
-              text: `Please provide a brief summary of the following text: ${text}`
+              text: `Please provide a brief summary of the following text: ${text}` //TENTATIVE
             }]
           }],
           generationConfig: {
