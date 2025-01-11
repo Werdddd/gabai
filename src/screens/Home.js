@@ -42,38 +42,45 @@ export default function HomeScreen({navigation}) {
     fetchData();
   }, []);
 
-  const renderReviewerCard = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.card}
-      onPress={() => navigation.navigate('ModeSelect', { reviewerId: item.id })}
-    >
-      <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
-        <Image
-          source={require('../../assets/graduation-icon.png')}
-          style={styles.icon}
-        />
-      </View>
-      <View style={styles.cardScrollContainer}>
-        {/* Scrollable card content */}
-        <ScrollView 
-          style={styles.cardContent} 
-          nestedScrollEnabled={true}
+  const renderReviewerCard = ({ item }) => {
+    console.log("Home Screen - Card reviewerId:", item.id); // Debug log
+    
+    return (
+        <TouchableOpacity 
+            style={styles.card}
+            onPress={() => {
+                console.log("Home Screen - Navigating with reviewerId:", item.id); // Debug log
+                navigation.navigate('ModeSelect', { reviewerId: item.id });
+            }}
         >
-          <Text style={styles.cardTitle}>{item.name}</Text>
-          <Text style={styles.cardDescription}>{item.aiDescription}</Text>
-          <Text style={styles.cardDate}>
-            {item.dateCreated
-              ? new Date(item.dateCreated.seconds * 1000).toLocaleDateString()
-              : ''}
-          </Text>
-        </ScrollView>
+            <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
+                <Image
+                    source={require('../../assets/graduation-icon.png')}
+                    style={styles.icon}
+                />
+            </View>
+            <View style={styles.cardScrollContainer}>
+                {/* Scrollable card content */}
+                <ScrollView 
+                    style={styles.cardContent} 
+                    nestedScrollEnabled={true}
+                >
+                    <Text style={styles.cardTitle}>{item.name}</Text>
+                    <Text style={styles.cardDescription}>{item.aiDescription}</Text>
+                    <Text style={styles.cardDate}>
+                        {item.dateCreated
+                            ? new Date(item.dateCreated.seconds * 1000).toLocaleDateString()
+                            : ''}
+                    </Text>
+                </ScrollView>
 
-      </View>
-      <View style={styles.arrowContainer}>
-        <Text style={styles.arrow}>&gt;</Text>
-      </View>
-    </TouchableOpacity>
-  );
+            </View>
+            <View style={styles.arrowContainer}>
+                <Text style={styles.arrow}>&gt;</Text>
+            </View>
+        </TouchableOpacity>
+    );
+  };
 
   if (loading) {
     return (
