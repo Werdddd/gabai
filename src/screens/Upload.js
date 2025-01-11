@@ -278,6 +278,13 @@ export default function Upload({navigation}) {
       // Generate quiz set
       await generateAiQuizSet(joinedTexts, reviewerDocRef.id);
 
+      // Generate summary using Gemini API
+      const summary = await generateSummary(joinedTexts);
+
+      // Store summary in Firestore
+      await storeSummary(summary, reviewerDocRef.id);
+
+
       // Clear inputs after processing
       setPlainText('');
       setFiles([]);
@@ -347,6 +354,58 @@ export default function Upload({navigation}) {
     } catch (error) {
       console.error('Error storing reviewer data:', error);
       Alert.alert('Error', 'Failed to store reviewer data');
+    }
+  };
+
+  const generateSummary = async (text) => {
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_KEY}`,
+        {
+          contents: [{
+            role: "user",
+            parts: [{
+              text: `Please provide a brief summary of the following text: ${text}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 1,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+            responseMimeType: "text/plain"
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.candidates && response.data.candidates[0].content.parts[0].text) {
+        return response.data.candidates[0].content.parts[0].text;
+      }
+      
+      return '';
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      return '';
+    }
+  };
+
+  const storeSummary = async (summary, reviewerId) => {
+    try {
+      const db = getFirestore();
+      await addDoc(collection(db, 'summary'), {
+        reviewerId: reviewerId,
+        summary: summary,
+        createdAt: new Date(),
+      });
+
+      console.log('Summary stored successfully');
+    } catch (error) {
+      console.error('Error storing summary:', error);
     }
   };
 
