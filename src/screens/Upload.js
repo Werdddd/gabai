@@ -113,7 +113,7 @@ export default function Upload({navigation}) {
       // Clear inputs after processing
       setPlainText('');
       setFiles([]);
-      navigation.navigate('ModeSelect');
+      navigation.navigate('StyleSelect');
 
     } catch (error) {
       console.error('Error in handleCreateReviewer:', error);
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
-    backgroundColor: '#C0A080',
+    backgroundColor: '#B2A561',
   },
   createReviewerText: {
     color: 'white',
