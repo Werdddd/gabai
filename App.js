@@ -16,6 +16,8 @@ import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
 
+import Candle from './src/screens/Candle';
+
 const Stack = createStackNavigator(); 
 
 export default function App() {
@@ -38,6 +40,7 @@ export default function App() {
         <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }}  />
         <Stack.Screen name="Quiz" component={Quiz} />
         <Stack.Screen name="Summary" component={Summary} />
+        <Stack.Screen name="Candle" component={Candle} />
       </Stack.Navigator>
       
     </NavigationContainer>

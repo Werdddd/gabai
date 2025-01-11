@@ -383,6 +383,7 @@ export default function Upload({navigation}) {
             role: "user",
             parts: [{
               text: `In the language/dialect ${chosenLanguage}, please provide a brief summary of the following text: ${text}`
+
             }]
           }],
           generationConfig: {
