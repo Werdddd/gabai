@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 
 export default function ModeSelect() {
   const navigation = useNavigation();
+  const [selectedCard, setSelectedCard] = useState(null); // Track selected card
 
   const modes = [
     {
@@ -14,7 +15,7 @@ export default function ModeSelect() {
       route: 'Chat'
     },
     {
-      title: 'Flashcards\nMode', 
+      title: 'Flashcards\nMode',
       description: 'Quick, engaging memory boosters.',
       icon: require('../../assets/flashcards.png'),
       route: 'Flashcards'
@@ -33,7 +34,7 @@ export default function ModeSelect() {
 
   return (
     <>
-      <ScrollView 
+      <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
@@ -41,12 +42,18 @@ export default function ModeSelect() {
         <Text style={styles.header}>Choose your reviewer style</Text>
 
         {modes.map((mode, index) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             key={index}
-            style={styles.modeCard}
-            onPress={() => handleModeSelect(mode.route)}
+            style={[
+              styles.modeCard,
+              selectedCard === index && styles.selectedCard // Apply highlight if selected
+            ]}
+            onPress={() => {
+              setSelectedCard(index);
+              navigation.navigate(mode.route);
+            }}
           >
-            <Image 
+            <Image
               source={mode.icon}
               style={styles.icon}
               resizeMode="contain"
@@ -55,9 +62,8 @@ export default function ModeSelect() {
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
-        
       </ScrollView>
-      <NavBar navigation={navigation}/>
+      <NavBar navigation={navigation} />
     </>
   );
 }
@@ -75,8 +81,9 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    marginBottom: 30,
-    color: '#333'
+    marginBottom: 18,
+    color: '#333',
+    marginTop: 40,
   },
   modeCard: {
     width: '80%',
@@ -94,22 +101,27 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  selectedCard: {
+    backgroundColor: '#FBEFB0', // Highlight color for selected card
+    borderColor: '#B2A561',
+    borderWidth: 2,
+  },
   icon: {
     width: 40,
     height: 40,
     marginBottom: 10,
-    tintColor: '#C0A080'
+    tintColor: '#C0A080',
   },
   modeTitle: {
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 5,
-    color: '#333'
+    color: '#B2A561',
   },
   modeDescription: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#666'
-  }
+    color: '#666',
+  },
 });
