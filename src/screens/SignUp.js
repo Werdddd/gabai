@@ -17,6 +17,8 @@ export default function SignUpScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigation = useNavigation();
 
+  const defaultProfilePicture = 'https://media.tenor.com/qr1uGMR-e8oAAAAe/xd.png'; // Replace with your default picture URL
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email.toLowerCase());
@@ -72,6 +74,7 @@ export default function SignUpScreen() {
         lastName,
         email: trimmedEmail,
         mobileNumber: trimmedMobile,
+        profilePicture: defaultProfilePicture, // Set the default profile picture
         createdAt: new Date().toISOString(),
         isAdmin: false,
       });
@@ -167,86 +170,91 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#f5f5f5',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 20,
-    },
-    logo: {
-      width: 200,
-      height: 200,
-      marginBottom: 10,
-      marginTop:-50,
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: '400',
-      marginBottom: 10,
-      color: '#000',
-      textAlign:'left',
-      alignSelf:'flex-start',
-      marginTop:-20,
-    },
-    row: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: '100%',
-    },
-    input: {
-      width: '100%',
-      height: 50,
-      backgroundColor: '#fff',
-      borderRadius: 8,
-      paddingHorizontal: 15,
-      marginVertical: 10,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-    },
-    halfInput: {
-      width: '48%',
-    },
-    passwordContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      width: '100%',
-      height: 50,
-      backgroundColor: '#fff',
-      borderRadius: 8,
-      paddingHorizontal: 15,
-      marginVertical: 10,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-    },
-    passwordInput: {
-      flex: 1,
-      
-    },
-    registerButton: {
-      width: '100%',
-      height: 50,
-      backgroundColor: '#103E5B',
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginVertical: 20,
-    },
-    registerButtonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
-    signUpLink: {
-      color: '#B2A561',
-      fontWeight: 'bold',
-    },
-  });
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 10,
+    marginTop: -50,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '400',
+    marginBottom: 10,
+    color: '#000',
+    textAlign: 'left',
+    alignSelf: 'flex-start',
+    marginTop: -20,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  halfInput: {
+    width: '48%',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  passwordInput: {
+    flex: 1,
+  },
+  registerButton: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#103E5B',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  signInLink: {
+    fontSize: 14,
+    color: '#103E5B',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  signUpLink: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+});
