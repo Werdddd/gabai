@@ -21,7 +21,7 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* Change this for testing new routes */}
-      <Stack.Navigator initialRouteName="Flashcards"> 
+      <Stack.Navigator initialRouteName="Start"> 
       
       <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />

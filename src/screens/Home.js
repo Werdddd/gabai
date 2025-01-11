@@ -51,7 +51,7 @@ export default function HomeScreen({navigation}) {
             onPress={() => {
                 console.log("Home Screen - Navigating with reviewerId:", item.id); // Debug log
                 navigation.navigate('ModeSelect', { reviewerId: item.id });
-            }}
+            }} // Pass reviewerId to ModeSelect
         >
             <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
                 <Image

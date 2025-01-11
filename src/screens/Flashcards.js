@@ -139,12 +139,14 @@ const addFlashcard = async (front, back, reviewerUid) => {
   }
 };
 
-const fetchFlashcards = async () => {
+const fetchFlashcards = async (reviewerId) => {
   try {
     const db = getFirestore();
     const flashcardsRef = collection(db, 'flashcards');
     const flashcardsSnapshot = await getDocs(flashcardsRef);
-    return flashcardsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    return flashcardsSnapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .filter((flashcard) => flashcard.reviewerUid === reviewerId); // Filter by reviewerId
   } catch (error) {
     console.error('Error fetching flashcards:', error);
     return [];
@@ -198,14 +200,15 @@ const Flashcard = ({ item }) => {
   );
 };
 
-const Flashcards = ({ navigation }) => {
+const Flashcards = ({ navigation, route }) => {
+  const { reviewerId } = route.params; // Get reviewerId from route params
   const [flashcards, setFlashcards] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadFlashcards = async () => {
     try {
       setLoading(true);
-      const loadedFlashcards = await fetchFlashcards();
+      const loadedFlashcards = await fetchFlashcards(reviewerId); // Pass reviewerId to fetchFlashcards
       setFlashcards(loadedFlashcards);
     } catch (error) {
       console.error('Error loading flashcards:', error);
@@ -216,7 +219,7 @@ const Flashcards = ({ navigation }) => {
 
   useEffect(() => {
     loadFlashcards();
-  }, []);
+  }, [reviewerId]);
 
   if (loading) {
     return (
