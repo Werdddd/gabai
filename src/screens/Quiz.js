@@ -1,123 +1,159 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
-import { getFirestore, doc, getDoc, addDoc, collection } from 'firebase/firestore';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { initializeApp } from 'firebase/app';
 import { auth, firestore } from '../../firebase-config';
-import { CONVERT_API_KEY, GEMINI_KEY} from '../../api-keys'
-import axios from 'axios';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function Quiz({ route, navigation }) {
     const reviewerId = route.params?.reviewerId;
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
-    const [quizSet, setQuizSet] = useState([]);
+    const [questions, setQuestions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [isAnswered, setIsAnswered] = useState(false);
 
     useEffect(() => {
-        const generateAiQuizSet = async () => {
+        const fetchQuestions = async () => {
+            if (!reviewerId) {
+                console.warn("ReviewerId is not defined.");
+                return;
+            }
+        
+            setIsLoading(true); // Ensure loading state is set at the start
             try {
-                // 1. Get the reviewer document
-                const db = getFirestore();
-                const reviewerDoc = await getDoc(doc(db, 'reviewer', reviewerId));
-                
-                if (!reviewerDoc.exists()) {
-                    console.error('Reviewer document not found');
-                    return;
-                }
-
-                const reviewerText = reviewerDoc.data().text;
-
-                // 2. Generate quiz questions using Gemini
-                const response = await axios.post(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_KEY}`,
-                    {
-                        contents: [{
-                            role: "user",
-                            parts: [{
-                                text: `Based on this knowledge: "${reviewerText}", generate 5 multiple choice questions. 
-                                Return the response in this exact JSON format:
-                                [
-                                    {
-                                        "question": "the question text",
-                                        "option1": "first option",
-                                        "option2": "second option",
-                                        "option3": "third option",
-                                        "option4": "fourth option",
-                                        "answer": "the correct option"
-                                    }
-                                ]
-                                Ensure the response is valid JSON and the answer exactly matches one of the options.`
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,  // Reduced for more consistent formatting
-                            topK: 40,
-                            topP: 0.95,
-                            maxOutputTokens: 8192,
-                            responseMimeType: "text/plain"
-                        }
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }
+                console.log("Fetching questions for reviewerId:", reviewerId);
+        
+                const q = query(
+                    collection(firestore, 'quiz'),
+                    where("reviewerUid", "==", reviewerId) // Filters only matching reviewerUid
                 );
-
-                // Log the raw response text
-                console.log("Raw Gemini Response:", response.data.candidates[0].content.parts[0].text);
-
-                if (response.data.candidates && response.data.candidates[0].content.parts[0].text) {
-                    let responseText = response.data.candidates[0].content.parts[0].text;
-                    
-                    // Clean up the response text if needed
-                    responseText = responseText.trim();
-                    if (responseText.startsWith('```json')) {
-                        responseText = responseText.replace('```json', '').replace('```', '').trim();
-                    }
-
-                    try {
-                        const generatedQuestions = JSON.parse(responseText);
-                        console.log("Parsed Questions:", generatedQuestions);
-
-                        // 3. Store each question separately in Firestore
-                        for (const question of generatedQuestions) {
-                            await addDoc(collection(db, 'quiz'), {
-                                question: question.question,
-                                option1: question.option1,
-                                option2: question.option2,
-                                option3: question.option3,
-                                option4: question.option4,
-                                answer: question.answer,
-                                reviewerUid: reviewerId,
-                                createdAt: new Date()
-                            });
-                        }
-
-                        setQuizSet(generatedQuestions);
-                    } catch (parseError) {
-                        console.error('JSON Parse Error:', parseError);
-                        console.error('Failed to parse text:', responseText);
-                    }
+                const querySnapshot = await getDocs(q);
+        
+                if (querySnapshot.empty) {
+                    console.log("No questions found for this reviewerId.");
+                    setQuestions([]); // Set empty questions if none are found
+                } else {
+                    const fetchedQuestions = querySnapshot.docs.map(doc => doc.data());
+                    console.log("Fetched questions:", fetchedQuestions);
+                    setQuestions(fetchedQuestions);
                 }
             } catch (error) {
-                console.error('Error generating quiz:', error);
-                if (error.response) {
-                    console.error('API Error Response:', error.response.data);
-                }
+                console.error('Error fetching questions:', error.message || error);
+            } finally {
+                setIsLoading(false); // Always reset loading state
             }
         };
+        
 
         if (reviewerId) {
-            generateAiQuizSet();
+            fetchQuestions();
+        } else {
+            console.error('No reviewerId provided.');
+            setIsLoading(false);
         }
     }, [reviewerId]);
 
-   
+    const handleAnswer = (selectedOption) => {
+        setSelectedAnswer(selectedOption);
+        setIsAnswered(true);
+    };
+
+    const handleNavigation = (direction) => {
+        if (direction === 'next' && currentQuestion < questions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
+            setSelectedAnswer(null);
+            setIsAnswered(false);
+        } else if (direction === 'prev' && currentQuestion > 0) {
+            setCurrentQuestion(currentQuestion - 1);
+            setSelectedAnswer(null);
+            setIsAnswered(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <Text>Loading questions...</Text>
+            </View>
+        );
+    }
+
+    if (questions.length === 0) {
+        return (
+            <View style={styles.container}>
+                <Text>No questions found for this reviewer.</Text>
+            </View>
+        );
+    }
+
     return (
-       <View>
-        <Text>Quiz</Text>
-       </View>
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.title}>Data Structures & Algorithms</Text>
+                <Text style={styles.subtitle}>Reviewer</Text>
+            </View>
+
+            <View style={styles.scoreContainer}>
+                <Text style={styles.scoreText}>{currentQuestion + 1}/{questions.length}</Text>
+                <View style={styles.progressBar}>
+                    <View 
+                        style={[
+                            styles.progress, 
+                            { width: `${((currentQuestion + 1) / questions.length) * 100}%` }
+                        ]} 
+                    />
+                </View>
+            </View>
+
+            <View style={styles.questionContainer}>
+                <Text style={styles.questionText}>
+                    {questions[currentQuestion].question}
+                </Text>
+            </View>
+
+            <View style={styles.optionsContainer}>
+                {['option1', 'option2', 'option3', 'option4'].map((option, index) => {
+                    const optionValue = questions[currentQuestion][option];
+                    const isCorrect = optionValue === questions[currentQuestion].answer;
+                    const isSelected = selectedAnswer === optionValue;
+                    
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            style={[
+                                styles.optionButton,
+                                isAnswered && isSelected && !isCorrect && styles.wrongAnswer,
+                                isAnswered && isCorrect && styles.correctAnswer,
+                            ]}
+                            onPress={() => !isAnswered && handleAnswer(optionValue)}
+                            disabled={isAnswered}
+                        >
+                            <Text style={styles.optionText}>
+                                {optionValue}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+
+            <View style={styles.navigationButtons}>
+                <TouchableOpacity
+                    style={[styles.navButton, currentQuestion === 0 && styles.disabledButton]}
+                    onPress={() => handleNavigation('prev')}
+                    disabled={currentQuestion === 0}
+                >
+                    <Text style={styles.navButtonText}>Previous</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                    style={[styles.navButton, currentQuestion === questions.length - 1 && styles.disabledButton]}
+                    onPress={() => handleNavigation('next')}
+                    disabled={currentQuestion === questions.length - 1}
+                >
+                    <Text style={styles.navButtonText}>Next</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 }
 
@@ -156,7 +192,7 @@ const styles = StyleSheet.create({
     },
     progress: {
         height: '100%',
-        backgroundColor: '#DAA520', // Golden color
+        backgroundColor: '#DAA520',
         borderRadius: 5,
     },
     questionContainer: {
@@ -193,5 +229,35 @@ const styles = StyleSheet.create({
     optionText: {
         fontSize: 16,
         color: '#333',
+    },
+    wrongAnswer: {
+        backgroundColor: '#ffebee',
+        borderColor: '#ef5350',
+    },
+    correctAnswer: {
+        backgroundColor: '#e8f5e9',
+        borderColor: '#66bb6a',
+    },
+    navigationButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        paddingHorizontal: 20,
+    },
+    navButton: {
+        backgroundColor: '#DAA520',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        width: '45%',
+        alignItems: 'center',
+    },
+    navButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    disabledButton: {
+        opacity: 0.5,
     },
 });
