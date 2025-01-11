@@ -94,7 +94,7 @@ export default function LoginScreen() {
           await AsyncStorage.setItem('rememberedPassword', trimmedPassword);
         }
         Alert.alert('Successfully Logged In.');
-        navigation.navigate('Home');
+        navigation.navigate('Profile');
       }
     } catch (error) {
       console.error(error);
