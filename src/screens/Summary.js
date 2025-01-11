@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
 import { GEMINI_KEY } from '../../api-keys';
+import { firestore } from '../../firebase-config';
 
 export default function Summary({ route, navigation }) {
   const reviewerId = route.params?.reviewerId;
   const [summary, setSummary] = useState('');
+  const [reviewerName, setReviewerName] = useState("");
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -31,9 +33,29 @@ export default function Summary({ route, navigation }) {
     }
   }, [reviewerId]);
 
+  useEffect(() => {
+    const fetchReviewerName = async () => {
+        if (!reviewerId) return;
+
+        try {
+            const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
+            if (reviewerDoc.exists()) {
+                setReviewerName(reviewerDoc.data().name);
+            }
+        } catch (error) {
+            console.error('Error fetching reviewer name:', error);
+        }
+    };
+
+    fetchReviewerName();
+  }, [reviewerId]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Summary</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>{reviewerName}</Text>
+        <Text style={styles.subtitle}>Reviewer</Text>
+      </View>
       <Text style={styles.summaryText}>{summary}</Text>
     </View>
   );
@@ -45,10 +67,18 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  header: {
     marginBottom: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
   },
   summaryText: {
     fontSize: 16,

@@ -20,6 +20,7 @@ import Animated, {
 import NavBar from '../components/NavBar';
 import { getFirestore, addDoc, collection, getDocs, doc, getDoc, writeBatch } from 'firebase/firestore';
 import { auth } from '../../firebase-config';
+import { firestore } from '../../firebase-config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -182,7 +183,6 @@ const Flashcard = ({ item }) => {
   return (
     <TouchableWithoutFeedback onPress={handleFlip}>
       <View style={styles.cardContainer}>
-        <Text style={styles.reviewerText}>{item.reviewer} Reviewer</Text>
 
         {/* Front Side */}
         <Animated.View style={[styles.card, frontAnimatedStyle]}>
@@ -201,9 +201,27 @@ const Flashcard = ({ item }) => {
 };
 
 const Flashcards = ({ navigation, route }) => {
-  const { reviewerId } = route.params; // Get reviewerId from route params
+  const { reviewerId } = route.params;
   const [flashcards, setFlashcards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewerName, setReviewerName] = useState("");
+
+  useEffect(() => {
+    const fetchReviewerName = async () => {
+        if (!reviewerId) return;
+
+        try {
+            const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
+            if (reviewerDoc.exists()) {
+                setReviewerName(reviewerDoc.data().name);
+            }
+        } catch (error) {
+            console.error('Error fetching reviewer name:', error);
+        }
+    };
+
+    fetchReviewerName();
+  }, [reviewerId]);
 
   const loadFlashcards = async () => {
     try {
@@ -231,6 +249,10 @@ const Flashcards = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.reviewerTitle}>{reviewerName}</Text>
+        <Text style={styles.reviewerSubtitle}>Reviewer</Text>
+      </View>
       <FlatList
         data={flashcards}
         renderItem={({ item }) => <Flashcard item={item} />}
@@ -305,6 +327,20 @@ const styles = StyleSheet.create({
     height: 120,
     marginTop: -230,
     marginBottom: 70,
+  },
+  header: {
+    paddingTop: 40,
+    paddingBottom: 10,
+    alignItems: 'center',
+  },
+  reviewerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  reviewerSubtitle: {
+    fontSize: 16,
+    color: '#666',
   },
 });
 
