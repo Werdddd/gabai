@@ -53,12 +53,12 @@ const Overview = () => {
       setCurrentStep(currentStep + 1); // Move to the next slide
       animateImage(); // Trigger image fade animation when moving to the next slide
     } else {
-      navigation.navigate("Login"); // Redirect to login after the last slide
+      navigation.navigate("Home"); // Redirect to login after the last slide
     }
   };
 
   const handleSkip = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Home");
   };
 
   return (

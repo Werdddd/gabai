@@ -15,18 +15,20 @@ import Start from './src/screens/Start';
 import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
+
 const Stack = createStackNavigator(); 
 
 export default function App() {
   return (
     <NavigationContainer>
       {/* Change this for testing new routes */}
-      <Stack.Navigator initialRouteName="Start"> 
+      <Stack.Navigator initialRouteName="Landing"> 
       
-      <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+        
         <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Upload" component={Upload} />
