@@ -1,75 +1,43 @@
-// HomeScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
-  TextInput,
+  Text,
+  View,
   FlatList,
-  TouchableOpacity,
   Image,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import axios from 'axios';
-import Header from '../components/Header';
-import NavBar from '../components/NavBar';
+import { firestore } from '../../firebase-config'; // Adjust this path as necessary
+import { collection, getDocs } from 'firebase/firestore';
 
-const HomeScreen = ({navigation}) => {
-  const [userData, setUserData] = useState({ name: '', profileImage: '' });
-  const [reviewers, setReviewers] = useState([]);
+export default function HomeScreen() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const reviewerCollection = collection(firestore, 'reviewer');
+      const snapshot = await getDocs(reviewerCollection);
+      const fetchedData = snapshot.docs.map((doc) => ({
+        id: doc.id, // Include the document ID
+        ...doc.data(),
+      }));
+      setData(fetchedData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Fetch user data from backend
-    axios
-      .get('https://your-backend.com/user')
-      .then((response) => {
-        const { name, profileImage } = response.data;
-        setUserData({ name, profileImage });
-      })
-      .catch((error) => console.error('Error fetching user data:', error));
-
-    // Fetch reviewers data
-    axios
-      .get('https://your-backend.com/reviewers')
-      .then((response) => setReviewers(response.data))
-      .catch((error) => console.error('Error fetching reviewers:', error));
-
-    // Dummy data for now
-    setReviewers([
-      {
-        id: 1,
-        name: 'Data Structures & Algorithms',
-        description:
-          'The study of organizing data efficiently using structures like arrays and trees.',
-        dateCreated: '01/08/25',
-        iconColor: '#D4AF37',
-      },
-      {
-        id: 2,
-        name: 'Artificial Intelligence',
-        description: 'Understanding intelligent agents and their behaviors.',
-        dateCreated: '01/08/25',
-        iconColor: '#002855',
-      },
-      {
-        id: 3,
-        name: 'Networks and Communications',
-        description: 'Principles of data transmission and protocols.',
-        dateCreated: '01/08/25',
-        iconColor: '#FF4B4B',
-      },
-      {
-        id: 4,
-        name: 'Multimedia Systems',
-        description: 'Techniques for handling and processing multimedia data.',
-        dateCreated: '01/08/25',
-        iconColor: '#32CD32',
-      },
-    ]);
+    fetchData();
   }, []);
 
   const renderReviewerCard = ({ item }) => (
     <TouchableOpacity style={styles.card}>
-      <View style={[styles.iconContainer, { backgroundColor: item.iconColor }]}>
+      <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
         <Image
           source={require('../../assets/graduation-icon.png')} // Replace with your icon
           style={styles.icon}
@@ -77,8 +45,12 @@ const HomeScreen = ({navigation}) => {
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.name}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
-        <Text style={styles.cardDate}>{item.dateCreated}</Text>
+        <Text style={styles.cardDescription}>{item.aiDescription}</Text>
+        <Text style={styles.cardDate}>
+          {item.dateCreated
+            ? new Date(item.dateCreated.seconds * 1000).toLocaleDateString()
+            : ''}
+        </Text>
       </View>
       <View style={styles.arrowContainer}>
         <Text style={styles.arrow}>&gt;</Text>
@@ -86,89 +58,42 @@ const HomeScreen = ({navigation}) => {
     </TouchableOpacity>
   );
 
-  return (
-    <View style={styles.container}>
-      {/* Header Component */}
-      <Header name={userData.name} profileImage={userData.profileImage} />
-
-      <View style={styles.searchBarContainer}>
-        <TextInput
-            style={styles.searchBar}
-            placeholder="Search..."
-            placeholderTextColor="#999"
-        />
-        <TouchableOpacity style={styles.searchButton}>
-            <Image
-            source={require('../../assets/search-icon.png')} // Replace with your icon path
-            style={styles.searchIcon}
-            />
-        </TouchableOpacity>
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#103E5B" />
       </View>
+    );
+  }
 
-      {/* Reviewers Section */}
-      <Text style={styles.sectionTitle}>Your Reviewers</Text>
-      <FlatList
-        data={reviewers}
-        renderItem={renderReviewerCard}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.cardContainer}
-      />
-      <NavBar navigation={navigation} />
-    </View>
+  return (
+    <FlatList
+      contentContainerStyle={styles.container}
+      data={data}
+      renderItem={renderReviewerCard}
+      keyExtractor={(item) => item.id}
+    />
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#f5f5f5',
-    padding: 16,
-  },
-  searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  searchBar: {
-    flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
-  },
-  searchButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#333', // Optional: Set color if using a monochrome icon
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  cardContainer: {
-    paddingBottom: 20,
+    padding: 10,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 16,
-    marginBottom: 10,
+    marginBottom: 15,
+    padding: 15,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
   iconContainer: {
     width: 50,
@@ -188,25 +113,28 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#103E5B',
   },
   cardDescription: {
     fontSize: 14,
-    color: '#666',
-    marginVertical: 4,
+    color: '#333',
+    marginVertical: 5,
   },
   cardDate: {
     fontSize: 12,
-    color: '#999',
+    color: '#888',
   },
   arrowContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrow: {
-    fontSize: 18,
-    color: '#ccc',
+    fontSize: 20,
+    color: '#888',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
-
-export default HomeScreen;
