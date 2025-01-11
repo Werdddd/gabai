@@ -245,7 +245,12 @@ export default function Upload({navigation}) {
         userUid: userUid,
         aiDescription: aiDescription
       });
-      console.log('Reviewer data stored with ID:', docRef.id);
+
+      // Navigate with the reviewer ID
+      navigation.navigate('ModeSelect', { 
+        reviewerId: docRef.id  // This is the document ID from Firestore
+      });
+      
       return docRef;
     } catch (error) {
       console.error('Error storing reviewer data:', error);
