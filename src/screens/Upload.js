@@ -12,7 +12,22 @@ import axios from 'axios';
 import tinycolor from 'tinycolor2';
 import Header from '../components/Header';
 import NavBar from '../components/NavBar';
+import { Picker } from '@react-native-picker/picker';
 
+const PHILIPPINE_LANGUAGES = [
+  'English',
+  'Filipino (Tagalog)',
+  'Cebuano',
+  'Ilocano',
+  'Hiligaynon (Ilonggo)',
+  'Bicolano',
+  'Waray',
+  'Kapampangan',
+  'Pangasinan',
+  'Chavacano',
+  'Tausug',
+  'Maranao'
+];
 
 export default function Upload({navigation}) {
 
@@ -21,6 +36,7 @@ export default function Upload({navigation}) {
   const [reviewerId, setReviewerId] = useState('');
   const [plainText, setPlainText] = useState('');
   const [cardColor, setCardColor] = useState('#C0A080');
+  const [chosenLanguage, setChosenLanguage] = useState('English');
   
   const colorPickerRef = useRef(null);
   const [files, setFiles] = useState([]);
@@ -78,7 +94,7 @@ export default function Upload({navigation}) {
               role: 'user',
               parts: [
                 {
-                  text: `Create multiple flashcards consisting of a question and an answer based on the following content (5 minimum) and output them as JSON:\n\n${text}`,
+                  text: `In the language/dialect ${chosenLanguage}, create multiple flashcards consisting of a question and an answer based on the following content (5 minimum) and output them as JSON:\n\n${text}`,
                 },
               ],
             },
@@ -149,7 +165,7 @@ export default function Upload({navigation}) {
                 contents: [{
                     role: "user",
                     parts: [{
-                        text: `Based on this knowledge: "${reviewerText}", generate 5 multiple choice questions. 
+                        text: `Based on this knowledge: "${reviewerText}", generate 5 multiple choice questions and answers written in the language/dialect ${chosenLanguage}. 
                         Return the response in this exact JSON format:
                         [
                             {
@@ -303,7 +319,7 @@ export default function Upload({navigation}) {
           contents: [{
             role: "user",
             parts: [{
-              text: `Please provide a brief description (1 sentence) summarizing the main topic and key points of the following text: ${text}`
+              text: `In the language/dialect ${chosenLanguage}, please provide a brief description (1 sentence) summarizing the main topic and key points of the following text: ${text}`
             }]
           }],
           generationConfig: {
@@ -336,12 +352,13 @@ export default function Upload({navigation}) {
     try {
       const db = getFirestore();
       const docRef = await addDoc(collection(db, 'reviewer'), {
-        name: name,
+        name: name || "Untitled",
         text: text,
         cardColor: cardColor,
         dateCreated: dateCreated,
         userUid: userUid,
-        aiDescription: aiDescription
+        aiDescription: aiDescription,
+        translateTo: chosenLanguage
       });
 
       console.log("Upload Screen - Created reviewerId:", docRef.id);
@@ -365,7 +382,8 @@ export default function Upload({navigation}) {
           contents: [{
             role: "user",
             parts: [{
-              text: `Please provide a brief summary of the following text: ${text}`
+              text: `In the language/dialect ${chosenLanguage}, please provide a brief summary of the following text: ${text}`
+
             }]
           }],
           generationConfig: {
@@ -474,6 +492,21 @@ export default function Upload({navigation}) {
             onChangeText={setName}
             placeholderTextColor={styles.placeholder.color}
           />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Choose Language/Dialect</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={chosenLanguage}
+              onValueChange={(itemValue) => setChosenLanguage(itemValue)}
+              style={styles.picker}
+            >
+              {PHILIPPINE_LANGUAGES.map((language) => (
+                <Picker.Item key={language} label={language} value={language} />
+              ))}
+            </Picker>
+          </View>
         </View>
 
         <View style={styles.uploadContainer}>
@@ -661,5 +694,16 @@ const styles = StyleSheet.create({
   colorPicker: {
     flex: 1,
     borderRadius: 8,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
   },
 });

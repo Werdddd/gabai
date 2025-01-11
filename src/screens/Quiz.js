@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { auth, firestore } from '../../firebase-config';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+
 import PomodoroTimer from '../components/PomodoroTimer';
+
 
 export default function Quiz({ route, navigation }) {
     const reviewerId = route.params?.reviewerId;
@@ -12,6 +15,8 @@ export default function Quiz({ route, navigation }) {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isAnswered, setIsAnswered] = useState(false);
+
+    const [reviewerName, setReviewerName] = useState("");
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -54,9 +59,30 @@ export default function Quiz({ route, navigation }) {
         }
     }, [reviewerId]);
 
+    useEffect(() => {
+        const fetchReviewerName = async () => {
+            if (!reviewerId) return;
+
+            try {
+                const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
+                if (reviewerDoc.exists()) {
+                    setReviewerName(reviewerDoc.data().name);
+                }
+            } catch (error) {
+                console.error('Error fetching reviewer name:', error);
+            }
+        };
+
+        fetchReviewerName();
+    }, [reviewerId]);
+
     const handleAnswer = (selectedOption) => {
         setSelectedAnswer(selectedOption);
         setIsAnswered(true);
+        
+        if (selectedOption === questions[currentQuestion].answer) {
+            setScore(prevScore => prevScore + 1);
+        }
     };
 
     const handleNavigation = (direction) => {
@@ -92,12 +118,15 @@ export default function Quiz({ route, navigation }) {
         <View style={styles.container}>
             <PomodoroTimer/>
             <View style={styles.header}>
-                <Text style={styles.title}>Data Structures & Algorithms</Text>
+                <Text style={styles.title}>{reviewerName}</Text>
                 <Text style={styles.subtitle}>Reviewer</Text>
             </View>
 
             <View style={styles.scoreContainer}>
-                <Text style={styles.scoreText}>{currentQuestion + 1}/{questions.length}</Text>
+                <View style={styles.scoreHeader}>
+                    <Text style={styles.scoreText}>{currentQuestion + 1}/{questions.length}</Text>
+                    <Text style={styles.scoreText}>Score: {score}/{questions.length}</Text>
+                </View>
                 <View style={styles.progressBar}>
                     <View 
                         style={[
@@ -262,5 +291,11 @@ const styles = StyleSheet.create({
     },
     disabledButton: {
         opacity: 0.5,
+    },
+    scoreHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 5,
     },
 });
