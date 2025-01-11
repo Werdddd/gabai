@@ -45,7 +45,7 @@ export default function HomeScreen({navigation}) {
   const renderReviewerCard = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
-      onPress={() => navigation.navigate('ModeSelect', { reviewerId: item.id })}
+      onPress={() => navigation.navigate('ModeSelect', { reviewerId: item.id })} // Pass reviewerId to ModeSelect
     >
       <View style={[styles.iconContainer, { backgroundColor: item.cardColor || '#ff0000' }]}>
         <Image

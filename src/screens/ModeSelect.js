@@ -3,7 +3,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 
-export default function ModeSelect() {
+export default function ModeSelect({ route }) {
+  const { reviewerId } = route.params; // Get reviewerId from route params
   const navigation = useNavigation();
   const [selectedCard, setSelectedCard] = useState(null); // Track selected card
 
@@ -29,7 +30,7 @@ export default function ModeSelect() {
   ];
 
   const handleModeSelect = (route) => {
-    navigation.navigate(route);
+    navigation.navigate(route, { reviewerId }); // Pass reviewerId to the selected route
   };
 
   return (
@@ -50,7 +51,7 @@ export default function ModeSelect() {
             ]}
             onPress={() => {
               setSelectedCard(index);
-              navigation.navigate(mode.route);
+              handleModeSelect(mode.route); // Use handleModeSelect to navigate
             }}
           >
             <Image
