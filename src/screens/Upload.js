@@ -177,12 +177,12 @@ export default function Upload({navigation}) {
 
       // Generate AI description using Gemini
       const aiDescription = await generateAIDescription(joinedTexts);
-      
-      // Store reviewer data with AI description
-      const reviewerDocRef = await storeReviewerData(name, joinedTexts, cardColor, new Date(), auth.currentUser.uid, aiDescription);
 
       // Generate flashcards using Gemini API
       const flashcards = await generateFlashcards(joinedTexts);
+
+      // Store reviewer data with AI description
+      const reviewerDocRef = await storeReviewerData(name, joinedTexts, cardColor, new Date(), auth.currentUser.uid, aiDescription);
 
       // Store flashcards in Firestore
       await storeFlashcards(flashcards, reviewerDocRef.id);
