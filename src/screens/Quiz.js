@@ -56,6 +56,10 @@ export default function Quiz({ route, navigation }) {
     const handleAnswer = (selectedOption) => {
         setSelectedAnswer(selectedOption);
         setIsAnswered(true);
+        
+        if (selectedOption === questions[currentQuestion].answer) {
+            setScore(prevScore => prevScore + 1);
+        }
     };
 
     const handleNavigation = (direction) => {
@@ -94,7 +98,10 @@ export default function Quiz({ route, navigation }) {
             </View>
 
             <View style={styles.scoreContainer}>
-                <Text style={styles.scoreText}>{currentQuestion + 1}/{questions.length}</Text>
+                <View style={styles.scoreHeader}>
+                    <Text style={styles.scoreText}>{currentQuestion + 1}/{questions.length}</Text>
+                    <Text style={styles.scoreText}>Score: {score}/{questions.length}</Text>
+                </View>
                 <View style={styles.progressBar}>
                     <View 
                         style={[
@@ -259,5 +266,11 @@ const styles = StyleSheet.create({
     },
     disabledButton: {
         opacity: 0.5,
+    },
+    scoreHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 5,
     },
 });
