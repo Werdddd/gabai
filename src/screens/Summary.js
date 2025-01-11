@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import axios from 'axios';
 import { GEMINI_KEY } from '../../api-keys';
+import PomodoroTimer from '../components/PomodoroTimer';
 
 export default function Summary({ route, navigation }) {
   const reviewerId = route.params?.reviewerId;
@@ -33,6 +34,7 @@ export default function Summary({ route, navigation }) {
 
   return (
     <View style={styles.container}>
+      <PomodoroTimer/>
       <Text style={styles.title}>Summary</Text>
       <Text style={styles.summaryText}>{summary}</Text>
     </View>

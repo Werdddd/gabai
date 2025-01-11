@@ -15,11 +15,14 @@ import Start from './src/screens/Start';
 import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
+import { TimerProvider } from './src/components/TimerContext';
 import Candle from './src/screens/Candle';
 const Stack = createStackNavigator(); 
 
 export default function App() {
   return (
+    <TimerProvider>
+
     <NavigationContainer>
       {/* Change this for testing new routes */}
       <Stack.Navigator initialRouteName="Start"> 
@@ -41,6 +44,8 @@ export default function App() {
       </Stack.Navigator>
       
     </NavigationContainer>
+    </TimerProvider>
+
   );
 }
 
