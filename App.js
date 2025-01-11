@@ -14,7 +14,7 @@ import Overview from './src/screens/Overview';
 import Start from './src/screens/Start';
 import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
-
+import Summary from './src/screens/Summary';
 const Stack = createStackNavigator(); 
 
 export default function App() {
@@ -35,6 +35,7 @@ export default function App() {
         <Stack.Screen name="Flashcards" component={Flashcards} />
         <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }}  />
         <Stack.Screen name="Quiz" component={Quiz} />
+        <Stack.Screen name="Summary" component={Summary} />
       </Stack.Navigator>
       
     </NavigationContainer>
