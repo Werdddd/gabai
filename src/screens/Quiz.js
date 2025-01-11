@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { auth, firestore } from '../../firebase-config';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 
 export default function Quiz({ route, navigation }) {
     const reviewerId = route.params?.reviewerId;
@@ -11,6 +11,8 @@ export default function Quiz({ route, navigation }) {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isAnswered, setIsAnswered] = useState(false);
+
+    const [reviewerName, setReviewerName] = useState("");
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -53,6 +55,23 @@ export default function Quiz({ route, navigation }) {
         }
     }, [reviewerId]);
 
+    useEffect(() => {
+        const fetchReviewerName = async () => {
+            if (!reviewerId) return;
+
+            try {
+                const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
+                if (reviewerDoc.exists()) {
+                    setReviewerName(reviewerDoc.data().name);
+                }
+            } catch (error) {
+                console.error('Error fetching reviewer name:', error);
+            }
+        };
+
+        fetchReviewerName();
+    }, [reviewerId]);
+
     const handleAnswer = (selectedOption) => {
         setSelectedAnswer(selectedOption);
         setIsAnswered(true);
@@ -93,7 +112,7 @@ export default function Quiz({ route, navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Data Structures & Algorithms</Text>
+                <Text style={styles.title}>{reviewerName}</Text>
                 <Text style={styles.subtitle}>Reviewer</Text>
             </View>
 
