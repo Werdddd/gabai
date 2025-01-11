@@ -10,6 +10,8 @@ import Upload from './src/screens/Upload';
 import Flashcards from './src/screens/Flashcards';
 import ProfileScreen from './src/screens/ProfileScreen';
 import ModeSelect from './src/screens/ModeSelect';
+import Overview from './src/screens/Overview';
+import Start from './src/screens/Start';
 
 const Stack = createStackNavigator(); 
 
@@ -17,9 +19,9 @@ export default function App() {
   return (
     <NavigationContainer>
       {/* Change this for testing new routes */}
-      <Stack.Navigator initialRouteName="Landing"> 
+      <Stack.Navigator initialRouteName="Start"> 
       
-        
+      <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
         <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
@@ -28,6 +30,7 @@ export default function App() {
         <Stack.Screen name="Upload" component={Upload} />
         <Stack.Screen name="Flashcards" component={Flashcards} />
         <Stack.Screen name="ModeSelect" component={ModeSelect} />
+        <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }}  />
 
       </Stack.Navigator>
     </NavigationContainer>
