@@ -3,26 +3,26 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 
-export default function ModeSelect() {
+export default function StyleSelect() {
   const navigation = useNavigation();
 
   const modes = [
     {
-      title: 'AI Study\nMode',
-      description: 'Personalized, interactive sessions with AI.',
-      icon: require('../../assets/chat.png'),
+      title: 'Pomodoro\nTechnique',
+      description: 'Boost focus with timed study and break intervals.',
+      icon: require('../../assets/clock-icon.png'),
       route: 'Chat'
     },
     {
-      title: 'Flashcards\nMode', 
-      description: 'Quick, engaging memory boosters.',
+      title: 'Candle\nStyle', 
+      description: 'Simulate traditional candlelight to create a focused study atmosphere.',
       icon: require('../../assets/flashcards.png'),
       route: 'Flashcards'
     },
     {
-      title: 'Quiz\nMode',
-      description: 'Dynamic quizzes to test your knowledge.',
-      icon: require('../../assets/quiz.png'),
+      title: 'Spaced\nRepetition',
+      description: 'Enhance memory by reviewing material at optimized intervals.',
+      icon: require('../../assets/timer.png'),
       route: 'Quiz'
     }
   ];
@@ -34,7 +34,7 @@ export default function ModeSelect() {
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
         >
-        <Text style={styles.header}>Choose your reviewer style</Text>
+        <Text style={styles.header}>Choose your study style</Text>
 
         {modes.map((mode, index) => (
             <TouchableOpacity 
@@ -51,6 +51,10 @@ export default function ModeSelect() {
             <Text style={styles.modeDescription}>{mode.description}</Text>
             </TouchableOpacity>
         ))}
+
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('ModeSelect')}>
+                  <Text style={styles.loginButtonText}>Next</Text>
+                </TouchableOpacity>
         
         </ScrollView>
         <NavBar navigation={navigation}/>
@@ -62,6 +66,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    
   },
   contentContainer: {
     padding: 20,
@@ -72,7 +77,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 30,
-    color: '#333'
+    color: '#333',
+    marginTop:40,
   },
   modeCard: {
     width: '80%',
@@ -89,6 +95,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  loginButton: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#103E5B',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    marginBottom:50,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   icon: {
     width: 40,

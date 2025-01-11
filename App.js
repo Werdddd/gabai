@@ -12,6 +12,7 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import ModeSelect from './src/screens/ModeSelect';
 import Overview from './src/screens/Overview';
 import Start from './src/screens/Start';
+import StyleSelect from './src/screens/StyleSelect';
 
 const Stack = createStackNavigator(); 
 
@@ -28,8 +29,9 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Upload" component={Upload} />
-        <Stack.Screen name="Flashcards" component={Flashcards} />
+        <Stack.Screen name="StyleSelect" component={StyleSelect} options={{ headerShown: false }}  />
         <Stack.Screen name="ModeSelect" component={ModeSelect} />
+        <Stack.Screen name="Flashcards" component={Flashcards} />
         <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }}  />
 
       </Stack.Navigator>
