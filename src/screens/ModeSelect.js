@@ -10,10 +10,10 @@ export default function ModeSelect({ route, navigation }) {
 
   const modes = [
     {
-      title: 'AI Study\nMode',
+      title: 'Summary \nMode',
       description: 'Personalized, interactive sessions with AI.',
       icon: require('../../assets/chat.png'),
-      route: 'Chat',
+      route: 'Summary',
       params: { reviewerId }
     },
     {
