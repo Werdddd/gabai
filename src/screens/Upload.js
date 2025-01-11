@@ -336,7 +336,7 @@ export default function Upload({navigation}) {
     try {
       const db = getFirestore();
       const docRef = await addDoc(collection(db, 'reviewer'), {
-        name: name,
+        name: name || "Untitled",
         text: text,
         cardColor: cardColor,
         dateCreated: dateCreated,
