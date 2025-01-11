@@ -1,8 +1,54 @@
-// Header.js
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { firestore } from '../../firebase-config';
 
-const Header = ({ name, profileImage }) => {
+const Header = () => {
+  const [name, setName] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Get the currently signed-in user
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (currentUser) {
+          const userId = currentUser.uid; // Get the user ID
+          console.log('Current User ID:', userId);
+
+          // Fetch user data from Firestore
+          const userDocRef = doc(firestore, 'users', userId);
+          const userSnapshot = await getDoc(userDocRef);
+
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            console.log('User data:', userData);
+            setName(userData.firstName || 'Guest');
+            setProfileImage(userData.profilePicture || '');
+          } else {
+            console.error('User document does not exist.');
+          }
+        } else {
+          console.warn('No user is currently signed in.');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#B2A561" />;
+  }
+
   return (
     <View style={styles.header}>
       <View style={styles.headerTextContainer}>
@@ -10,7 +56,7 @@ const Header = ({ name, profileImage }) => {
         <Text style={styles.subtitle}>What do you wanna learn today?</Text>
       </View>
       <Image
-        source={{ uri: profileImage }}
+        source={{ uri: profileImage || 'https://via.placeholder.com/50' }}
         style={styles.profileImage}
       />
     </View>
@@ -31,7 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: '#403D3D',
-    marginBottom:10,
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
@@ -42,8 +88,8 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     backgroundColor: '#ddd',
-    borderWidth:1,
-    borderColor:'#B2A561'
+    borderWidth: 1,
+    borderColor: '#B2A561',
   },
 });
 
