@@ -409,10 +409,38 @@ export default function Upload({navigation}) {
     }
   };
 
-  const handleColorSelected = (color) => {
-    const hexColor = tinycolor({ h: color.h * 360, s: color.s, v: color.v }).toHexString();
-    setCardColor(hexColor);
+  const saveColorToDatabase = (color) => {
+    console.log("Saving Color to Database:", color);
+    // Database save logic here
   };
+  
+
+  const handleColorSelected = (color) => {
+    console.log("Raw Color Data from Picker:", color);
+  
+    // Use hue directly if it's already in degrees (0-360)
+    const hsv = {
+      h: color.h,  // Assume color.h is already in degrees
+      s: color.s,  // Saturation remains as is (0-1)
+      v: color.v,  // Value remains as is (0-1)
+    };
+  
+    console.log("Normalized HSV Values:", hsv);
+  
+    // Convert HSV to Hex
+    const hexColor = tinycolor(hsv).toHexString();
+  
+    console.log("Converted Hex Color:", hexColor);
+  
+    // Update state and save to database
+    setCardColor(hexColor);
+    console.log("State Updated with Color:", hexColor);
+  
+    saveColorToDatabase(hexColor);
+  };
+  
+  
+  
 
   const handleFileSelection = async () => {
     try {
