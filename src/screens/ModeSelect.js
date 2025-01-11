@@ -34,7 +34,7 @@ export default function ModeSelect({ route, navigation }) {
 
   const handleModeSelection = (mode) => {
     console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
-    navigation.navigate(mode.route, { reviewerId: reviewerId });
+    navigation.navigate(mode.route, { reviewerId: reviewerId }); // Ensure mode.route is a string
   };
 
   return (
@@ -54,8 +54,9 @@ export default function ModeSelect({ route, navigation }) {
               selectedCard === index && styles.selectedCard // Apply highlight if selected
             ]}
             onPress={() => {
+              
               setSelectedCard(index);
-              handleModeSelect(mode.route); // Use handleModeSelect to navigate
+              handleModeSelection(mode); // Pass the entire mode object
             }}
           >
             <Image
