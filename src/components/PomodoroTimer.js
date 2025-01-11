@@ -1,27 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { TimerContext } from './TimerContext';
 
 export default function PomodoroTimer() {
-  const [timer, setTimer] = useState(60); // Study time set to 1 minute
-  const [isStudyTime, setIsStudyTime] = useState(true);
-  const [isRunning, setIsRunning] = useState(false);
-
-  useEffect(() => {
-    let timerInterval;
-    if (isRunning) {
-      timerInterval = setInterval(() => {
-        setTimer((prev) => {
-          if (prev > 0) return prev - 1;
-
-          // Toggle between study and rest timers
-          setIsStudyTime(!isStudyTime);
-          return isStudyTime ? 300 : 60; // 5 min rest or 1 min study
-        });
-      }, 1000);
-    }
-
-    return () => clearInterval(timerInterval);
-  }, [isRunning, isStudyTime]);
+  const { timer, isStudyTime, isRunning, setIsRunning } = useContext(TimerContext);
 
   return (
     <View style={styles.timerContainer}>
@@ -42,25 +24,22 @@ export default function PomodoroTimer() {
 
 const styles = StyleSheet.create({
   timerContainer: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    padding: 10,
+    marginTop: 50,
+    padding: 20,
     backgroundColor: '#103E5B',
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: 'center',
   },
   timerText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   button: {
-    marginTop: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    marginTop: 20,
+    padding: 10,
     backgroundColor: '#B2A561',
-    borderRadius: 6,
+    borderRadius: 5,
   },
   buttonText: {
     color: '#fff',

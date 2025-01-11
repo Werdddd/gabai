@@ -20,7 +20,10 @@ import Animated, {
 import NavBar from '../components/NavBar';
 import { getFirestore, addDoc, collection, getDocs, doc, getDoc, writeBatch } from 'firebase/firestore';
 import { auth } from '../../firebase-config';
+
 import { firestore } from '../../firebase-config';
+
+import PomodoroTimer from '../components/PomodoroTimer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -180,7 +183,7 @@ const Flashcard = ({ item }) => {
 ));
 
 
-  return (
+  return (            
     <TouchableWithoutFeedback onPress={handleFlip}>
       <View style={styles.cardContainer}>
 
@@ -197,6 +200,7 @@ const Flashcard = ({ item }) => {
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
+    
   );
 };
 
@@ -248,6 +252,7 @@ const Flashcards = ({ navigation, route }) => {
   }
 
   return (
+
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.reviewerTitle}>{reviewerName}</Text>
@@ -262,6 +267,7 @@ const Flashcards = ({ navigation, route }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
       />
+      <PomodoroTimer/>
       <NavBar navigation={navigation} />
     </View>
   );

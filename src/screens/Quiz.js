@@ -1,7 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { auth, firestore } from '../../firebase-config';
+
 import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+
+import PomodoroTimer from '../components/PomodoroTimer';
+
 
 export default function Quiz({ route, navigation }) {
     const reviewerId = route.params?.reviewerId;
@@ -110,7 +114,9 @@ export default function Quiz({ route, navigation }) {
     }
 
     return (
+        
         <View style={styles.container}>
+            <PomodoroTimer/>
             <View style={styles.header}>
                 <Text style={styles.title}>{reviewerName}</Text>
                 <Text style={styles.subtitle}>Reviewer</Text>
