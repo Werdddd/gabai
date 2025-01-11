@@ -18,6 +18,7 @@ export default function Upload({navigation}) {
 
   const [name, setName] = useState('');
   const [texts, setTexts] = useState([]);
+  const [reviewerId, setReviewerId] = useState('');
   const [plainText, setPlainText] = useState('');
   const [cardColor, setCardColor] = useState('#C0A080');
   
@@ -113,7 +114,6 @@ export default function Upload({navigation}) {
       // Clear inputs after processing
       setPlainText('');
       setFiles([]);
-      navigation.navigate('StyleSelect');
 
     } catch (error) {
       console.error('Error in handleCreateReviewer:', error);
@@ -170,9 +170,10 @@ export default function Upload({navigation}) {
         aiDescription: aiDescription
       });
 
-      // Navigate with the reviewer ID
+      console.log("Upload Screen - Created reviewerId:", docRef.id);
+
       navigation.navigate('ModeSelect', { 
-        reviewerId: docRef.id  // This is the document ID from Firestore
+        reviewerId: docRef.id
       });
       
     } catch (error) {
