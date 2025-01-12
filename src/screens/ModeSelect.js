@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 import PomodoroTimer from '../components/PomodoroTimer';
 import { useGlobalContext } from '../components/GlobalState';
+import ShareQRModal from '../components/ShareQRModal';
+import QRCode from 'react-native-qrcode-svg';
 
 export default function ModeSelect({ route, navigation }) {
   const [selectedReviewerCard, setSelectedReviewerCard] = useState(null);
@@ -41,6 +43,8 @@ export default function ModeSelect({ route, navigation }) {
       .toString()
       .padStart(2, '0')}`;
   };
+
+  const [isShareModalVisible, setShareModalVisible] = useState(false);
 
   const reviewerModes = [
     {
@@ -151,16 +155,28 @@ export default function ModeSelect({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => {
-            if (selectedReviewerCard && selectedStudyCard) {
-              navigation.navigate(selectedReviewerCard.route, { reviewerId: reviewerId });
-            }
-          }}
-        >
-          <Text style={styles.loginButtonText}>Next</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => {
+              if (selectedReviewerCard && selectedStudyCard) {
+                navigation.navigate(selectedReviewerCard.route, { reviewerId: reviewerId });
+              }
+            }}
+          >
+            <Text style={styles.loginButtonText}>Next</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.shareButton}
+            onPress={() => setShareModalVisible(true)}
+          >
+            <Image
+              source={require('../../assets/scan-qr.jpg')}
+              style={styles.shareIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {isPomodoroActive && (
@@ -205,6 +221,12 @@ export default function ModeSelect({ route, navigation }) {
       )}
 
       <NavBar navigation={navigation} />
+
+      <ShareQRModal
+        isVisible={isShareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        reviewerId={reviewerId}
+      />
     </>
   );
 }
@@ -267,7 +289,6 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: '80%',
-    height: 50,
     backgroundColor: '#103E5B',
     borderRadius: 8,
     alignItems: 'center',
@@ -277,7 +298,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    marginBottom: 50,
+    height: 40
   },
   loginButtonText: {
     color: '#fff',
@@ -335,5 +356,23 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  shareButton: {
+    backgroundColor: '#B2A561',
+    padding: 12,
+    borderRadius: 30,
+    alignItems: 'center',
+  },
+  shareIcon: {
+    width: 24,
+    height: 24,
+    tintColor: 'white',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+ 
+    marginBottom: 40
   },
 });

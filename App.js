@@ -15,6 +15,7 @@ import Start from './src/screens/Start';
 import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
+import QRCodeScanner from './src/screens/QRCodeScanner';
 
 import { TimerProvider } from './src/components/TimerContext';
 import { GlobalProvider } from './src/components/GlobalState';
@@ -47,6 +48,7 @@ export default function App() {
         <Stack.Screen name="Quiz" component={Quiz} />
         <Stack.Screen name="Summary" component={Summary} />
         <Stack.Screen name="Candle" component={Candle} />
+        <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
       </Stack.Navigator>
       
     </NavigationContainer>
