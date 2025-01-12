@@ -3,9 +3,11 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 import PomodoroTimer from '../components/PomodoroTimer';
+import { useGlobalContext } from '../components/GlobalState';
 
 export default function ModeSelect({ route, navigation }) {
   const [selectedReviewerCard, setSelectedReviewerCard] = useState(null);
+  const {pickedStudyStyle, setPickedStudyStyle } = useGlobalContext();
   const [selectedStudyCard, setSelectedStudyCard] = useState(null);
   const reviewerId = route.params?.reviewerId;
   const [isPomodoroActive, setPomodoroActive] = useState(false);
@@ -66,19 +68,19 @@ export default function ModeSelect({ route, navigation }) {
 
   const studyModes = [
     {
-      title: 'Pomodoro\nTechnique',
+      title: 'Pomodoro Technique',
       description: 'Boost focus with timed study and break intervals.',
       icon: require('../../assets/clock-icon.png'),
       route: 'Chat',
     },
     {
-      title: 'Candle\nStyle',
+      title: 'Candle Style',
       description: 'Simulate traditional candlelight to create a focused study atmosphere.',
       icon: require('../../assets/flashcards.png'),
       route: 'Flashcards',
     },
     {
-      title: 'Spaced\nRepetition',
+      title: 'Spaced Repetition',
       description: 'Enhance memory by reviewing material at optimized intervals.',
       icon: require('../../assets/timer.png'),
       route: 'Quiz',
@@ -87,21 +89,20 @@ export default function ModeSelect({ route, navigation }) {
 
   const handleModeSelection = (mode, type) => {
     console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
-    if (type === 'reviewer') {
-      setSelectedReviewerCard(mode);
-    } else {
-      setSelectedStudyCard(mode);
-      if (mode.title.includes('Pomodoro')) {
-        setPomodoroActive(true);
-        setTimer(1500); // Reset timer to 25 minutes
-      } else {
-        setPomodoroActive(false);
-      }
-    }
+    setSelectedStudyCard(mode.title);
+    setPickedStudyStyle(mode.title);
+    console.log('Picked Study Style:', mode.title); 
+    // if (type === 'reviewer') {
+    //   setSelectedReviewerCard(mode);
+    // } else {
+    //   setSelectedStudyCard(mode);
+    // }
   };
 
   return (
     <>
+      {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>}
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -115,7 +116,7 @@ export default function ModeSelect({ route, navigation }) {
             key={index}
             style={[
               styles.modeCard,
-              selectedReviewerCard === mode && styles.selectedCard // Apply highlight if selected
+              selectedReviewerCard === mode && styles.selectedCard 
             ]}
             onPress={() => handleModeSelection(mode, 'reviewer')}
           >

@@ -17,6 +17,7 @@ import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
 
 import { TimerProvider } from './src/components/TimerContext';
+import { GlobalProvider } from './src/components/GlobalState';
 
 import Candle from './src/screens/Candle';
 
@@ -24,6 +25,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <GlobalProvider>
     <TimerProvider>
 
     <NavigationContainer>
@@ -49,6 +51,7 @@ export default function App() {
       
     </NavigationContainer>
     </TimerProvider>
+    </GlobalProvider>
 
   );
 }
