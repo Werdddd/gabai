@@ -116,7 +116,7 @@ export default function Quiz({ route, navigation }) {
     return (
         
         <View style={styles.container}>
-            <PomodoroTimer/>
+            {/* <PomodoroTimer/> */}
             <View style={styles.header}>
                 <Text style={styles.title}>{reviewerName}</Text>
                 <Text style={styles.subtitle}>Reviewer</Text>

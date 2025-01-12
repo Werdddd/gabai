@@ -6,7 +6,7 @@ import { GEMINI_KEY } from '../../api-keys';
 
 import { firestore } from '../../firebase-config';
 
-import PomodoroTimer from '../components/PomodoroTimer';
+
 
 
 export default function Summary({ route, navigation }) {
@@ -62,7 +62,6 @@ export default function Summary({ route, navigation }) {
         <Text style={styles.subtitle}>Reviewer</Text>
       </View>
 
-      <PomodoroTimer/>
 
       <Text style={styles.summaryText}>{summary}</Text>
     </View>

@@ -114,7 +114,7 @@ export default function ModeSelect({ route, navigation }) {
 
   return (
     <>
-      {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>}
+      {/* {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>} */}
 
       <ScrollView
         style={styles.container}
