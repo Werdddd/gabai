@@ -92,6 +92,10 @@ export default function ModeSelect({ route, navigation }) {
   ];
 
   const handleModeSelection = (mode, type) => {
+    console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
+    setSelectedStudyCard(mode.title);
+    setPickedStudyStyle(mode.title);
+    console.log('Picked Study Style:', mode.title); 
 
     if (type === 'reviewer') {
       setSelectedReviewerCard(mode);
@@ -110,7 +114,7 @@ export default function ModeSelect({ route, navigation }) {
 
   return (
     <>
-      {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>}
+      {/* {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>} */}
 
       <ScrollView
         style={styles.container}
@@ -125,7 +129,7 @@ export default function ModeSelect({ route, navigation }) {
             key={index}
             style={[
               styles.modeCard,
-
+              
               selectedReviewerCard?.title === mode.title && styles.selectedCard, // Highlight if selected
 
             ]}
@@ -136,6 +140,7 @@ export default function ModeSelect({ route, navigation }) {
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
+         <Text style={styles.header}>Choose your study style</Text>
 
         {studyModes.map((mode, index) => (
           <TouchableOpacity
