@@ -154,24 +154,28 @@ export default function ModeSelect({ route, navigation }) {
           </TouchableOpacity>
         ))}
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => {
-            if (selectedReviewerCard && selectedStudyCard) {
-              navigation.navigate(selectedReviewerCard.route, { reviewerId: reviewerId });
-            }
-          }}
-        >
-          <Text style={styles.loginButtonText}>Next</Text>
-        <TouchableOpacity 
-          style={styles.shareButton}
-          onPress={() => setShareModalVisible(true)}
-        >
-          <Image
-            source={require('../../assets/scan-qr.jpg')}
-            style={styles.shareIcon}
-          />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => {
+              if (selectedReviewerCard && selectedStudyCard) {
+                navigation.navigate(selectedReviewerCard.route, { reviewerId: reviewerId });
+              }
+            }}
+          >
+            <Text style={styles.loginButtonText}>Next</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.shareButton}
+            onPress={() => setShareModalVisible(true)}
+          >
+            <Image
+              source={require('../../assets/scan-qr.jpg')}
+              style={styles.shareIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {isPomodoroActive && (
@@ -284,7 +288,6 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: '80%',
-    height: 50,
     backgroundColor: '#103E5B',
     borderRadius: 8,
     alignItems: 'center',
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    marginBottom: 50,
+    height: 40
   },
   loginButtonText: {
     color: '#fff',
@@ -354,16 +357,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   shareButton: {
-    position: 'absolute',
-    bottom: 90,
-    right: 20,
     backgroundColor: '#B2A561',
     padding: 12,
     borderRadius: 30,
+    alignItems: 'center',
   },
   shareIcon: {
     width: 24,
     height: 24,
     tintColor: 'white',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+ 
+    marginBottom: 40
   },
 });
