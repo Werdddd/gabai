@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
+import PomodoroTimer from '../components/PomodoroTimer';
 
 export default function ModeSelect({ route, navigation }) {
   const [selectedReviewerCard, setSelectedReviewerCard] = useState(null);
@@ -106,6 +107,7 @@ export default function ModeSelect({ route, navigation }) {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
+      
         <Text style={styles.header}>Choose your reviewer style</Text>
 
         {reviewerModes.map((mode, index) => (

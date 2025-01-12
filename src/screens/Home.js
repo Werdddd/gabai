@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { firestore } from '../../firebase-config'; // Adjust this path as necessary
+import { firestore, auth } from '../../firebase-config'; // Adjust this path as necessary
 import { collection, getDocs } from 'firebase/firestore';
 import Header from '../components/Header';
 import NavBar from '../components/NavBar';
@@ -27,10 +27,18 @@ export default function HomeScreen({navigation}) {
       const reviewerCollection = collection(firestore, 'reviewer');
       const snapshot = await getDocs(reviewerCollection);
       const fetchedData = snapshot.docs.map((doc) => ({
-        id: doc.id, // Include the document ID
+        id: doc.id,
         ...doc.data(),
-      }));
-      setData(fetchedData);
+      }))
+      .filter(reviewer => reviewer.userUid === auth.currentUser.uid); // Filter by current user's UID
+      
+      // Sort by dateCreated in descending order
+      const sortedData = fetchedData.sort((a, b) => {
+        const dateA = a.dateCreated?.seconds || 0;
+        const dateB = b.dateCreated?.seconds || 0;
+        return dateB - dateA;
+      });
+      setData(sortedData);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -180,7 +188,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    height: 150,  // Ensure fixed card height
   },
   cardScrollContainer: {
     flex: 1,

@@ -77,6 +77,7 @@ export default function SignUpScreen() {
         profilePicture: defaultProfilePicture, // Set the default profile picture
         createdAt: new Date().toISOString(),
         isAdmin: false,
+        isFirstRun: true
       });
 
       Alert.alert('Success', 'Registration successful. Please verify your email before logging in.');

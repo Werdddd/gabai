@@ -67,7 +67,7 @@ export default function ProfileScreen({ navigation }) {
   const handleImagePick = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ImagePicker.MediaType.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
@@ -122,6 +122,18 @@ export default function ProfileScreen({ navigation }) {
       Alert.alert("Success", "Profile updated successfully.");
     } catch (error) {
       Alert.alert("Error", error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      Alert.alert("Error", "Failed to log out. Please try again.");
     }
   };
 
@@ -196,6 +208,9 @@ export default function ProfileScreen({ navigation }) {
         </View>
         <TouchableOpacity style={styles.loginButton} onPress={handleUpdate}>
           <Text style={styles.loginButtonText}>Save Changes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </ScrollView>
       <NavBar navigation={navigation} />
@@ -280,6 +295,22 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   loginButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingHorizontal: 10,
+  },
+  logoutButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#B2A561",
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  logoutButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",

@@ -16,6 +16,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { auth } from '../../firebase-config'; 
 import { signInWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import { firestore } from '../../firebase-config';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -88,13 +90,35 @@ export default function LoginScreen() {
           'Your email is not verified. A verification link has been sent to your email. Please verify your email before logging in.'
         );
         return;
-      } else {
-        if (rememberMe) {
-          await AsyncStorage.setItem('rememberedEmail', trimmedEmail);
-          await AsyncStorage.setItem('rememberedPassword', trimmedPassword);
+      }
+
+      // Check isFirstRun in user's document
+      const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        if (userData.isFirstRun) {
+          // Update isFirstRun to false
+          await updateDoc(doc(firestore, 'users', user.uid), {
+            isFirstRun: false
+          });
+          
+          if (rememberMe) {
+            await AsyncStorage.setItem('rememberedEmail', trimmedEmail);
+            await AsyncStorage.setItem('rememberedPassword', trimmedPassword);
+          }
+          
+          navigation.navigate('Start');
+        } else {
+          if (rememberMe) {
+            await AsyncStorage.setItem('rememberedEmail', trimmedEmail);
+            await AsyncStorage.setItem('rememberedPassword', trimmedPassword);
+          }
+          
+          navigation.navigate('Home');
         }
-        Alert.alert('Successfully Logged In.');
-        navigation.navigate('Home');
+      } else {
+        Alert.alert('Error', 'User data not found');
       }
     } catch (error) {
       console.error(error);

@@ -15,19 +15,26 @@ import Start from './src/screens/Start';
 import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
+
+import { TimerProvider } from './src/components/TimerContext';
+
 import Candle from './src/screens/Candle';
+
 const Stack = createStackNavigator(); 
 
 export default function App() {
   return (
+    <TimerProvider>
+
     <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
         {/* Change this for testing new routes */}
-        <Stack.Navigator initialRouteName="Start"> 
-          <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+        <Stack.Navigator initialRouteName="Landing"> 
+            
           <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Upload" component={Upload} options={{ headerShown: false }}/>
@@ -40,6 +47,8 @@ export default function App() {
           {/* <Stack.Screen name="Candle" component={Candle} /> */}
         </Stack.Navigator>
       </NavigationContainer>
+    </TimerProvider>
+
     </SafeAreaView>
   );
 }
