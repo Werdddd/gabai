@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
@@ -7,7 +7,6 @@ import { GEMINI_KEY } from '../../api-keys';
 import { firestore } from '../../firebase-config';
 
 import PomodoroTimer from '../components/PomodoroTimer';
-
 
 export default function Summary({ route, navigation }) {
   const reviewerId = route.params?.reviewerId;
@@ -39,16 +38,16 @@ export default function Summary({ route, navigation }) {
 
   useEffect(() => {
     const fetchReviewerName = async () => {
-        if (!reviewerId) return;
+      if (!reviewerId) return;
 
-        try {
-            const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
-            if (reviewerDoc.exists()) {
-                setReviewerName(reviewerDoc.data().name);
-            }
-        } catch (error) {
-            console.error('Error fetching reviewer name:', error);
+      try {
+        const reviewerDoc = await getDoc(doc(firestore, 'reviewer', reviewerId));
+        if (reviewerDoc.exists()) {
+          setReviewerName(reviewerDoc.data().name);
         }
+      } catch (error) {
+        console.error('Error fetching reviewer name:', error);
+      }
     };
 
     fetchReviewerName();
@@ -56,15 +55,27 @@ export default function Summary({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.header}>
         <Text style={styles.title}>{reviewerName}</Text>
         <Text style={styles.subtitle}>Reviewer</Text>
       </View>
 
-      <PomodoroTimer/>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.summaryCard}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.summaryTitle}>Summary</Text>
+          </View>
+          <Text style={styles.summaryText}>{summary}</Text>
+        </View>
 
-      <Text style={styles.summaryText}>{summary}</Text>
+        <View style={styles.timerWrapper}>
+          <PomodoroTimer />
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -72,24 +83,67 @@ export default function Summary({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
     padding: 20,
-    backgroundColor: 'white',
+    paddingBottom: 40,
   },
   header: {
-    marginBottom: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
     alignItems: 'center',
+    backgroundColor: '#103E5B',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#fff',
+    opacity: 0.8,
+  },
+  summaryCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 20,
+  },
+  cardHeader: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#B2A561',
   },
   summaryText: {
     fontSize: 16,
     lineHeight: 24,
+    color: '#333',
+    padding: 15,
+  },
+  timerWrapper: {
+    marginTop: 20,
+    alignItems: 'center',
   },
 });

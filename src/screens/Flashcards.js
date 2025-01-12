@@ -258,6 +258,7 @@ const Flashcards = ({ navigation, route }) => {
         <Text style={styles.reviewerTitle}>{reviewerName}</Text>
         <Text style={styles.reviewerSubtitle}>Reviewer</Text>
       </View>
+      <PomodoroTimer/>
       <FlatList
         data={flashcards}
         renderItem={({ item }) => <Flashcard item={item} />}
@@ -267,7 +268,7 @@ const Flashcards = ({ navigation, route }) => {
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
       />
-      <PomodoroTimer/>
+   
       <NavBar navigation={navigation} />
     </View>
   );
