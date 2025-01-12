@@ -21,7 +21,6 @@ import NavBar from '../components/NavBar';
 import { getFirestore, addDoc, collection, getDocs, doc, getDoc, writeBatch } from 'firebase/firestore';
 import { auth } from '../../firebase-config';
 import { firestore } from '../../firebase-config';
-import PomodoroTimer from '../components/PomodoroTimer';
 
 const { width, height } = Dimensions.get('window');
 
@@ -180,13 +179,12 @@ const Flashcard = ({ item }) => {
 
 ));
 
-
   return (
   <>
-    <PomodoroTimer/>
+    
     <TouchableWithoutFeedback onPress={handleFlip}>
       <View style={styles.cardContainer}>
-        <Text style={styles.reviewerText}>{item.reviewer} Reviewer</Text>
+        
 
         {/* Front Side */}
         <Animated.View style={[styles.card, frontAnimatedStyle]}>
@@ -268,17 +266,13 @@ const styles = StyleSheet.create({
     height: height,
     justifyContent: 'center',
     alignItems: 'center',
-    top: -130,
+    
   },
-  reviewerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-    position: 'absolute',
-    top: 90,
-    color: '#333',
-  },
+ 
   card: {
+    
+    paddingLeft: 5,
+    paddingRight: 5,
     width: width * 0.9,
     height: height * 0.6,
     backgroundColor: '#fff',
@@ -291,6 +285,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+    marginTop: 120,
   },
   cardBack: {
     backgroundColor: '#B2A561',
