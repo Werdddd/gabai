@@ -24,7 +24,7 @@ export default function PomodoroTimer() {
 
 const styles = StyleSheet.create({
   timerContainer: {
-    marginTop: 50,
+    marginTop: 20,
     padding: 20,
     backgroundColor: '#103E5B',
     borderRadius: 10,
