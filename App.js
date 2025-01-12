@@ -14,14 +14,6 @@ import Overview from './src/screens/Overview';
 import Start from './src/screens/Start';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
-
-
-import QRCodeScanner from './src/screens/QRCodeScanner';
-
-import { TimerProvider } from './src/components/TimerContext';
-import { GlobalProvider } from './src/components/GlobalState';
-
-
 import Candle from './src/screens/Candle';
 import { TimerProvider } from './src/components/TimerContext';
 
@@ -29,9 +21,7 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <GlobalProvider>
     <TimerProvider>
-
       <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
           {/* Change this for testing new routes */}
@@ -52,10 +42,6 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
-
-
-
-    
     </TimerProvider>
   );
 }
