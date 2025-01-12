@@ -12,44 +12,37 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import ModeSelect from './src/screens/ModeSelect';
 import Overview from './src/screens/Overview';
 import Start from './src/screens/Start';
-import StyleSelect from './src/screens/StyleSelect';
 import Quiz from './src/screens/Quiz';
 import Summary from './src/screens/Summary';
-
+import Candle from './src/screens/Candle';
 import { TimerProvider } from './src/components/TimerContext';
 
-import Candle from './src/screens/Candle';
-
-const Stack = createStackNavigator(); 
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <TimerProvider>
-
-    <SafeAreaView style={{ flex: 1 }}>
-      <NavigationContainer>
-        {/* Change this for testing new routes */}
-        <Stack.Navigator initialRouteName="Landing"> 
-            
-          <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
-          <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
-          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
-          <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }}/>
-          <Stack.Screen name="Upload" component={Upload} options={{ headerShown: false }}/>
-          {/* <Stack.Screen name="StyleSelect" component={StyleSelect} options={{ headerShown: false }}  /> */}
-          <Stack.Screen name="ModeSelect" component={ModeSelect} options={{ headerShown: false }}  />
-          <Stack.Screen name="Flashcards" component={Flashcards} options={{ headerShown: false }} />
-          <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }}  />
-          <Stack.Screen name="Quiz" component={Quiz} />
-          <Stack.Screen name="Summary" component={Summary} />
-          {/* <Stack.Screen name="Candle" component={Candle} /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SafeAreaView style={{ flex: 1 }}>
+        <NavigationContainer>
+          {/* Change this for testing new routes */}
+          <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Start" component={Start} options={{ headerShown: false }} />
+            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Upload" component={Upload} options={{ headerShown: false }} />
+            <Stack.Screen name="ModeSelect" component={ModeSelect} options={{ headerShown: false }} />
+            <Stack.Screen name="Flashcards" component={Flashcards} options={{ headerShown: false }} />
+            <Stack.Screen name="Overview" component={Overview} options={{ headerShown: false }} />
+            <Stack.Screen name="Quiz" component={Quiz} />
+            <Stack.Screen name="Summary" component={Summary} />
+            <Stack.Screen name="Candle" component={Candle} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
     </TimerProvider>
-
-    </SafeAreaView>
   );
 }
 
