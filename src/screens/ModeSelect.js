@@ -3,11 +3,13 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import NavBar from '../components/NavBar';
 import PomodoroTimer from '../components/PomodoroTimer';
+import { useGlobalContext } from '../components/GlobalState';
 import ShareQRModal from '../components/ShareQRModal';
 import QRCode from 'react-native-qrcode-svg';
 
 export default function ModeSelect({ route, navigation }) {
   const [selectedReviewerCard, setSelectedReviewerCard] = useState(null);
+  const {pickedStudyStyle, setPickedStudyStyle } = useGlobalContext();
   const [selectedStudyCard, setSelectedStudyCard] = useState(null);
   const reviewerId = route.params?.reviewerId;
   const [isPomodoroActive, setPomodoroActive] = useState(false);
@@ -70,19 +72,19 @@ export default function ModeSelect({ route, navigation }) {
 
   const studyModes = [
     {
-      title: 'Pomodoro\nTechnique',
+      title: 'Pomodoro Technique',
       description: 'Boost focus with timed study and break intervals.',
       icon: require('../../assets/clock-icon.png'),
       route: 'Chat',
     },
     {
-      title: 'Candle\nStyle',
+      title: 'Candle Style',
       description: 'Simulate traditional candlelight to create a focused study atmosphere.',
       icon: require('../../assets/flashcards.png'),
       route: 'Flashcards',
     },
     {
-      title: 'Spaced\nRepetition',
+      title: 'Spaced Repetition',
       description: 'Enhance memory by reviewing material at optimized intervals.',
       icon: require('../../assets/timer.png'),
       route: 'Quiz',
@@ -90,28 +92,32 @@ export default function ModeSelect({ route, navigation }) {
   ];
 
   const handleModeSelection = (mode, type) => {
-    console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
+
     if (type === 'reviewer') {
       setSelectedReviewerCard(mode);
-    } else {
+    } else if (type === 'study') {
       setSelectedStudyCard(mode);
+
       if (mode.title.includes('Pomodoro')) {
         setPomodoroActive(true);
-        setTimer(1500); // Reset timer to 25 minutes
+        setTimer(1500); // Reset timer
       } else {
         setPomodoroActive(false);
       }
     }
+
   };
 
   return (
     <>
+      {selectedStudyCard === "Pomodoro Technique" && <PomodoroTimer/>}
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-      
+
         <Text style={styles.header}>Choose your reviewer style</Text>
 
         {reviewerModes.map((mode, index) => (
@@ -119,41 +125,33 @@ export default function ModeSelect({ route, navigation }) {
             key={index}
             style={[
               styles.modeCard,
-              selectedReviewerCard === mode && styles.selectedCard // Apply highlight if selected
+
+              selectedReviewerCard?.title === mode.title && styles.selectedCard, // Highlight if selected
+
             ]}
-            onPress={() => handleModeSelection(mode, 'reviewer')}
+            onPress={() => handleModeSelection(mode, 'reviewer')} // Set selected reviewer card
           >
-            <Image
-              source={mode.icon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
+            <Image source={mode.icon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.modeTitle}>{mode.title}</Text>
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
-
-        <Text style={styles.header}>Choose your study style</Text>
 
         {studyModes.map((mode, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.modeCard,
-              selectedStudyCard === mode && styles.selectedCard // Apply highlight if selected
+              selectedStudyCard?.title === mode.title && styles.selectedCard, // Highlight if selected
             ]}
-            onPress={() => handleModeSelection(mode, 'study')}
+            onPress={() => handleModeSelection(mode, 'study')} // Set selected study card and handle Pomodoro logic
           >
-            <Image
-              source={mode.icon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
+            <Image source={mode.icon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.modeTitle}>{mode.title}</Text>
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
-
+        
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.loginButton}
@@ -176,6 +174,7 @@ export default function ModeSelect({ route, navigation }) {
             />
           </TouchableOpacity>
         </View>
+
       </ScrollView>
 
       {isPomodoroActive && (

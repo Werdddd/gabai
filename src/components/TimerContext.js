@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 
-// Create the Timer Context
+
 export const TimerContext = createContext();
 
-// Timer Provider Component
+
 export function TimerProvider({ children }) {
-  const [timer, setTimer] = useState(60); // 1 minute study time
+  const [timer, setTimer] = useState(1800); 
   const [isStudyTime, setIsStudyTime] = useState(true);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -17,14 +17,13 @@ export function TimerProvider({ children }) {
         setTimer((prevTimer) => {
           if (prevTimer > 0) return prevTimer - 1;
 
-          // Switch between study and rest time
           setIsStudyTime((prev) => !prev);
-          return isStudyTime ? 300 : 60; // 5 minutes rest or 1 minute study
+          return isStudyTime ? 300 : 1800;
         });
       }, 1000);
     }
 
-    return () => clearInterval(timerInterval); // Cleanup on unmount
+    return () => clearInterval(timerInterval); 
   }, [isRunning, isStudyTime]);
 
   return (
