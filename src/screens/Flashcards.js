@@ -257,6 +257,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    
   },
   loadingContainer: {
     flex: 1,
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     height: height,
     justifyContent: 'center',
     alignItems: 'center',
-    top: -50,
+    top: -130,
   },
   reviewerText: {
     fontSize: 18,
@@ -311,9 +312,26 @@ const styles = StyleSheet.create({
   logo: {
     width: 120,
     height: 120,
-    marginTop: -230,
+    marginTop: -130,
     marginBottom: 70,
   },
+
+  header: {
+    paddingTop: 40,
+    paddingBottom: 10,
+    alignItems: 'center',
+  },
+  reviewerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  reviewerSubtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  
+
 });
 
 export default Flashcards;
