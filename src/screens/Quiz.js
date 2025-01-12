@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { auth, firestore } from '../../firebase-config';
 
@@ -114,9 +114,10 @@ export default function Quiz({ route, navigation }) {
     }
 
     return (
-        
-        <View style={styles.container}>
-            <PomodoroTimer/>
+        <>
+         <PomodoroTimer/>
+        <ScrollView style={styles.container}>
+           
             <View style={styles.header}>
                 <Text style={styles.title}>{reviewerName}</Text>
                 <Text style={styles.subtitle}>Reviewer</Text>
@@ -185,7 +186,8 @@ export default function Quiz({ route, navigation }) {
                     <Text style={styles.navButtonText}>Next</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
+        </>
     );
 }
 
@@ -194,6 +196,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         padding: 20,
+        
     },
     header: {
         alignItems: 'center',
@@ -283,6 +286,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         width: '45%',
         alignItems: 'center',
+        marginBottom: 40
     },
     navButtonText: {
         color: 'white',
