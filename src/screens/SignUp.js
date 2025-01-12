@@ -17,7 +17,7 @@ export default function SignUpScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigation = useNavigation();
 
-  const defaultProfilePicture = 'https://media.tenor.com/qr1uGMR-e8oAAAAe/xd.png'; // Replace with your default picture URL
+  const defaultProfilePicture = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0BNtXAHUN7p6A_LisDQZeOiwibKVEyTGniw&s'; // Replace with your default picture URL
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
