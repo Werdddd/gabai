@@ -86,14 +86,14 @@ export default function ModeSelect({ route, navigation }) {
   ];
 
   const handleModeSelection = (mode, type) => {
-    console.log("ModeSelect Screen - Navigating with reviewerId:", reviewerId);
     if (type === 'reviewer') {
       setSelectedReviewerCard(mode);
-    } else {
+    } else if (type === 'study') {
       setSelectedStudyCard(mode);
+
       if (mode.title.includes('Pomodoro')) {
         setPomodoroActive(true);
-        setTimer(1500); // Reset timer to 25 minutes
+        setTimer(1500); // Reset timer
       } else {
         setPomodoroActive(false);
       }
@@ -107,7 +107,7 @@ export default function ModeSelect({ route, navigation }) {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-      
+
         <Text style={styles.header}>Choose your reviewer style</Text>
 
         {reviewerModes.map((mode, index) => (
@@ -115,40 +115,31 @@ export default function ModeSelect({ route, navigation }) {
             key={index}
             style={[
               styles.modeCard,
-              selectedReviewerCard === mode && styles.selectedCard // Apply highlight if selected
+              selectedReviewerCard?.title === mode.title && styles.selectedCard, // Highlight if selected
             ]}
-            onPress={() => handleModeSelection(mode, 'reviewer')}
+            onPress={() => handleModeSelection(mode, 'reviewer')} // Set selected reviewer card
           >
-            <Image
-              source={mode.icon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
+            <Image source={mode.icon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.modeTitle}>{mode.title}</Text>
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
-
-        <Text style={styles.header}>Choose your study style</Text>
 
         {studyModes.map((mode, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.modeCard,
-              selectedStudyCard === mode && styles.selectedCard // Apply highlight if selected
+              selectedStudyCard?.title === mode.title && styles.selectedCard, // Highlight if selected
             ]}
-            onPress={() => handleModeSelection(mode, 'study')}
+            onPress={() => handleModeSelection(mode, 'study')} // Set selected study card and handle Pomodoro logic
           >
-            <Image
-              source={mode.icon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
+            <Image source={mode.icon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.modeTitle}>{mode.title}</Text>
             <Text style={styles.modeDescription}>{mode.description}</Text>
           </TouchableOpacity>
         ))}
+
 
         <TouchableOpacity
           style={styles.loginButton}
